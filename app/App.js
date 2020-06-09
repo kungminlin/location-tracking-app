@@ -17,8 +17,6 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import Geolocation from 'react-native-geolocation-service';
 
-console.log(Geolocation);
-
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -34,11 +32,11 @@ export default class App extends Component {
       macAddress = JSON.stringify(mac);
       this.setState({macAddress : JSON.stringify(mac)});
     })
+
     var watchID = Geolocation.watchPosition(
       position => {
         const {latitude, longitude} = position.coords;
-
-        console.log('position update');
+        console.log("position updated");
 
         this.setState({
           latitude: latitude,
@@ -49,13 +47,13 @@ export default class App extends Component {
       {
         enableHighAccuracy: true,
         timeout: 20000,
-        distanceFilter: 5
+        distanceFilter: 1
       }
     )
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('updated');
+    console.log(perimeterContains(this.state.latitude, this.state.longitude));
   }
 
   render() {
@@ -81,7 +79,10 @@ export default class App extends Component {
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Device Information</Text>
                 <Text style={styles.sectionDescription}>
-                  Location: {longitude}, {latitude}
+                  Location: {latitude}, {longitude}
+                </Text>
+                <Text style={styles.sectionDescription}>
+                  In Perimeter? {perimeterContains(latitude, longitude) ? "Yes" : "No"}
                 </Text>
                 <Text style={styles.sectionDescription}>
                   Mac Address: {macAddress}
@@ -137,4 +138,55 @@ const styles = StyleSheet.create({
   },
 });
 
-// export default App;
+const PERIMETER = require('./perimeter.json');
+
+function perimeterContains(lat, lng) {
+  console.log("Latitude: " + lat);
+  console.log("Longitude: " + lng);
+  var target = {lat: lat, lng: lng};
+  var intersections = 0;
+
+  for (var i = 0; i < PERIMETER.length; i++) {
+    var a = PERIMETER[i],
+        j = i+1;
+    if (j >= PERIMETER.length) j = 0;
+    var b = PERIMETER[j];
+    if (crossSegment(target, a, b)) intersections++;
+  }
+
+  console.log("Intersections: " + intersections);
+  return (intersections % 2 == 1);
+
+  function crossSegment(point, a, b) {
+    var px = point.lng,
+            py = point.lat,
+            ax = a.lng,
+            ay = a.lat,
+            bx = b.lng,
+            by = b.lat;
+        if (ay > by) {
+            ax = b.lng;
+            ay = b.lat;
+            bx = a.lng;
+            by = a.lat;
+        }
+        
+        if (px < 0) {
+            px += 360;
+        }
+        if (ax < 0) {
+            ax += 360;
+        }
+        if (bx < 0) {
+            bx += 360;
+        }
+
+        if (py == ay || py == by) py += 0.00000001;
+        if ((py > by || py < ay) || (px > Math.max(ax, bx))) return false;
+        if (px < Math.min(ax, bx)) return true;
+
+        var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
+        var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
+        return (blue >= red)
+  }
+}
