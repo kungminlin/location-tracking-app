@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,6 +6,7 @@ import {
   View,
   Text,
   StatusBar,
+  PermissionsAndroid,
 } from 'react-native';
 
 import {
@@ -21,40 +14,75 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
+import DeviceInfo from 'react-native-device-info';
+import GetLocation from 'react-native-get-location'
+
+export default class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      location: "",
+      macAddress: ""
+    };
+  }
+
+  componentDidMount() {
+    GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 15000,
+    })
+    .then(location => {
+        this.setState({location: location});
+    })
+    .catch(error => {
+        const { code, message } = error;
+        console.warn(code, message);
+    })
+
+    DeviceInfo.getMacAddress().then(mac => {
+      macAddress = JSON.stringify(mac);
+      this.setState({macAddress : JSON.stringify(mac)});
+    })
+  }
+
+  render() {
+    var location = this.state.location;
+    var macAddress = this.state.macAddress;
+    var deviceID = DeviceInfo.getUniqueId();
+
+    return (
+      <>
+        <StatusBar barStyle="dark-content" />
+        <SafeAreaView>
+          <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
+            style={styles.scrollView}>
+            <Header />
+            {global.HermesInternal == null ? null : (
+              <View style={styles.engine}>
+                <Text style={styles.footer}>Engine: Hermes</Text>
+              </View>
+            )}
+            <View style={styles.body}>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Device Information</Text>
+                <Text style={styles.sectionDescription}>
+                  Location: {location.longitude}, {location.latitude}
+                </Text>
+                <Text style={styles.sectionDescription}>
+                  Mac Address: {macAddress}
+                </Text>
+                <Text style={styles.sectionDescription}>
+                  Unique Device ID: {deviceID}
+                </Text>
+              </View>
             </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+          </ScrollView>
+        </SafeAreaView>
+      </>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -95,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+// export default App;

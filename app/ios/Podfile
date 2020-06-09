@@ -1,4 +1,5 @@
 platform :ios, '9.0'
+source 'https://github.com/CocoaPods/Specs.git'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 def add_flipper_pods!(versions = {})
@@ -76,6 +77,8 @@ target 'app' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  pod 'react-native-geolocation', path: '../node_modules/@react-native-community/geolocation'
 
   target 'appTests' do
     inherit! :complete

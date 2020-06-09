@@ -12,7 +12,8 @@
   "dependencies": {
     "react": "16.11.0",
     "react-native": "0.62.2",
-    "react-native-device-info": "^5.6.1"
+    "react-native-device-info": "^5.6.1",
+    "react-native-get-location": "^1.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
