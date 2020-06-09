@@ -15,38 +15,52 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import DeviceInfo from 'react-native-device-info';
-import GetLocation from 'react-native-get-location'
+import Geolocation from 'react-native-geolocation-service';
+
+console.log(Geolocation);
 
 export default class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      location: "",
+      latitude: 0,
+      longitude: 0,
       macAddress: ""
     };
   }
 
   componentDidMount() {
-    GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 15000,
-    })
-    .then(location => {
-        this.setState({location: location});
-    })
-    .catch(error => {
-        const { code, message } = error;
-        console.warn(code, message);
-    })
-
     DeviceInfo.getMacAddress().then(mac => {
       macAddress = JSON.stringify(mac);
       this.setState({macAddress : JSON.stringify(mac)});
     })
+    var watchID = Geolocation.watchPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+
+        console.log('position update');
+
+        this.setState({
+          latitude: latitude,
+          longitude: longitude
+        })
+      },
+      error => console.log(error),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        distanceFilter: 5
+      }
+    )
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('updated');
   }
 
   render() {
-    var location = this.state.location;
+    var latitude = this.state.latitude;
+    var longitude = this.state.longitude;
     var macAddress = this.state.macAddress;
     var deviceID = DeviceInfo.getUniqueId();
 
@@ -67,7 +81,7 @@ export default class App extends Component {
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Device Information</Text>
                 <Text style={styles.sectionDescription}>
-                  Location: {location.longitude}, {location.latitude}
+                  Location: {longitude}, {latitude}
                 </Text>
                 <Text style={styles.sectionDescription}>
                   Mac Address: {macAddress}
