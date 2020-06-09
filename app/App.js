@@ -17,12 +17,15 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import Geolocation from 'react-native-geolocation-service';
 
+var moment = require('moment');
+
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       latitude: 0,
       longitude: 0,
+      timestamp: 0,
       macAddress: ""
     };
   }
@@ -37,10 +40,12 @@ export default class App extends Component {
       position => {
         const {latitude, longitude} = position.coords;
         console.log("position updated");
+        console.log(position);
 
         this.setState({
           latitude: latitude,
-          longitude: longitude
+          longitude: longitude,
+          timestamp: position.timestamp
         })
       },
       error => console.log(error),
@@ -80,6 +85,9 @@ export default class App extends Component {
                 <Text style={styles.sectionTitle}>Device Information</Text>
                 <Text style={styles.sectionDescription}>
                   Location: {latitude}, {longitude}
+                </Text>
+                <Text style={styles.sectionDescription}>
+                  Last Updated: {moment(this.state.timestamp).format('LTS')}
                 </Text>
                 <Text style={styles.sectionDescription}>
                   In Perimeter? {perimeterContains(latitude, longitude) ? "Yes" : "No"}
