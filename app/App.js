@@ -6,7 +6,8 @@ import {
   View,
   Text,
   StatusBar,
-  PermissionsAndroid,
+  Button,
+  Alert
 } from 'react-native';
 
 import {
@@ -26,6 +27,7 @@ export default class App extends Component {
       latitude: 0,
       longitude: 0,
       timestamp: 0,
+      inBound: false,
       macAddress: ""
     };
   }
@@ -39,12 +41,11 @@ export default class App extends Component {
     var watchID = Geolocation.watchPosition(
       position => {
         const {latitude, longitude} = position.coords;
-        console.log("position updated");
-        console.log(position);
 
         this.setState({
           latitude: latitude,
           longitude: longitude,
+          inBound: perimeterContains(latitude, longitude),
           timestamp: position.timestamp
         })
       },
@@ -58,7 +59,40 @@ export default class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(perimeterContains(this.state.latitude, this.state.longitude));
+    console.log(this.state.inBound);
+    if (!prevState.inBound && this.state.inBound) {
+      Alert.alert(
+        "Company Entry",
+        "You are now entering company area. Your device information will be synced with your user information in the company's database",
+        [
+          {
+            text: "OK", onPress: () => this.sendDeviceInfo()
+          }
+        ],
+        { cancelable: false }
+      )
+    } else if (prevState.inBound && !this.state.inBound) {
+      Alert.alert(
+        "Company Exit",
+        "You are now exiting company area. Your device information will no longer be synced.",
+        [
+          {
+            text: "OK", onPress: () => this.sendExit()
+          }
+        ],
+        { cancelable: false }
+      )
+    }
+  }
+
+  // Send device information to the server
+  sendDeviceInfo() {
+    console.log("sent!");
+  }
+
+  // Send exit message to the server
+  sendExit() {
+    console.log("exit!");
   }
 
   render() {
@@ -90,7 +124,7 @@ export default class App extends Component {
                   Last Updated: {moment(this.state.timestamp).format('LTS')}
                 </Text>
                 <Text style={styles.sectionDescription}>
-                  In Perimeter? {perimeterContains(latitude, longitude) ? "Yes" : "No"}
+                  In Perimeter? {this.state.inBound ? "Yes" : "No"}
                 </Text>
                 <Text style={styles.sectionDescription}>
                   Mac Address: {macAddress}
@@ -146,11 +180,9 @@ const styles = StyleSheet.create({
   },
 });
 
+// Helper Function: Check if perimeter contains point
 const PERIMETER = require('./perimeter.json');
-
 function perimeterContains(lat, lng) {
-  console.log("Latitude: " + lat);
-  console.log("Longitude: " + lng);
   var target = {lat: lat, lng: lng};
   var intersections = 0;
 
@@ -162,7 +194,6 @@ function perimeterContains(lat, lng) {
     if (crossSegment(target, a, b)) intersections++;
   }
 
-  console.log("Intersections: " + intersections);
   return (intersections % 2 == 1);
 
   function crossSegment(point, a, b) {
