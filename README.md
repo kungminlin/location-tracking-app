@@ -14,12 +14,41 @@
 cd app
 npm install
 ```
-### 2. Testing
+#### Xcode Development
+If you are developing this app on Xcode or would like to test on an iOS device via Xcode, follow these steps to install CocoaPods dependencies:
+```bash
+$ sudo gem install cocoapods
+$ cd app/ios
+$ pod install
+```
+### 2. Starting Metro Server
 ```bash
 npx react-native start
-npx react-native run-android # for Android testing
-npx react-native run-ios # for iOS testing
 ```
-Note: `npx react-native start` is not necessary, but highly recommended to view realtime logs and feedback from the app.
-
-For testing with different hardware and operating systems, you can configure virtual devices via Android Studio or Xcode. Both developer libraries offer connection with physical devices via USB tethering.
+The Metro server enables hot reloading and debugging with your testing devices without tethering.
+### 3. Configuring Testing Devices
+#### Android Emulator
+1. Install [Android Studio](https://developer.android.com/studio/install).
+2. Create virtual devices via the AVD Manager.
+3. Run `npx react-native run-android` in `/app`.
+#### Android Physical Device
+1. Install [Android Studio](https://developer.android.com/studio/install).
+2. Tap `Settings > About phone > Build number` seven times. After a few taps, you should see steps counting down until you unlock developer options. The location of this option may vary depending on the vendor, but it will be in this general area.
+3. Connect your device to your PC via a USB cable. You should be prompted to enable USB debugging on your device.
+4. Use the `adb` tool under the platform-tools Android SDK tools. You can find this in the application data directory of your Android Studio software. Run `adb devices` to see if your device is properly connected. This command can also be used to check if virtual devices are connected.
+5. Run `npx react-native run-android` in `/app`
+#### iOS Emulator
+1. Install Xcode via App Store.
+2. Under the `Window` menu, select the `Devices` option.
+3. Click on the `+` sign at the bottom of the popup window and `Add Simulator`. Choose your desired configurations for the iOS emulator.
+4. Run `npx react-native run-ios` in `/app`.
+#### iOS Physical Device
+1. Install Xcode via App Store.
+2. Open project in Xcode.
+3. Connect iOS device via USB cable.
+4. If this is your first time testing on this iOS device, register your device in the `Product > Destination` option.
+5. In your project in Xcode, go to `General > Signing` and make sure your Apple developer account is selected. If you do not have a developer account, register for one and select it here.
+6. Repeat **Step 5** for the Tests target
+7. Your device should be listed as the build target in the Xcode toolbar. Press the `Build and run` button (`⌘-R`) to run your app.
+### 4. Debugging
+After running `npx react-native start`, outputs should be logged in the same console. Hot reload is enabled automatically, and you can shake your device (Android or iOS) to open the Developer menu. You can also enable/disable hot reload in this menu.
