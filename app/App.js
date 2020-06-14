@@ -59,7 +59,6 @@ export default class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.inBound);
     if (!prevState.inBound && this.state.inBound) {
       Alert.alert(
         "Company Entry",
