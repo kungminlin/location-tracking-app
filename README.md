@@ -52,3 +52,11 @@ The Metro server enables hot reloading and debugging with your testing devices w
 7. Your device should be listed as the build target in the Xcode toolbar. Press the `Build and run` button (`⌘-R`) to run your app.
 ### 4. Debugging
 After running `npx react-native start`, outputs should be logged in the same console. Hot reload is enabled automatically, and you can shake your device (Android or iOS) to open the Developer menu. You can also enable/disable hot reload in this menu.
+### 5. Troubleshooting
+Here are a few commonly encountered errors:
+1. **Xcode fails to build.** In this case, you might have run the `.xcodeproj` file instead of the `.xcworkspace` file. Running the `.xcworkspace` file should solve the issue.
+2. **Metro fails to run with Xcode; Shows the error "too many files".** OSX often comes with maximum file restrictions. If you are running on OS X Sierra or above, running the following commands should solve the issue:
+    * `sudo sysctl -w kern.maxfiles=5242880`
+    * `sudo sysctl -w kern.maxfilesperproc=524288`
+    * Restart your computer. If your computer is still having issues or runs slowly, rerun the above commands with suitable parameters or search up the appropriate alternative for your version of OSX.
+3. **SDK "iphoneos" cannot be located.** Most likely, your Xcode is installed in the Applications folder. If that is so, simply run `sudo xcode-select --switch /Applications/Xcode.app`
