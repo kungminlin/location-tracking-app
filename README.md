@@ -59,4 +59,5 @@ Here are a few commonly encountered errors:
     * `sudo sysctl -w kern.maxfiles=5242880`
     * `sudo sysctl -w kern.maxfilesperproc=524288`
     * Restart your computer. If your computer is still having issues or runs slowly, rerun the above commands with suitable parameters or search up the appropriate alternative for your version of OSX.
+    * Additionally, you may install watchman via `brew install watchman` to allow more files to be watched, resolving this issue.
 3. **SDK "iphoneos" cannot be located.** Most likely, your Xcode is installed in the Applications folder. If that is so, simply run `sudo xcode-select --switch /Applications/Xcode.app`
