@@ -50,9 +50,7 @@ target 'app' do
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
   pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
-  pod 'React', :path => '../node_modules/react-native/', :subspecs => [
-    'RCTGeolocation',
-  ]
+  pod 'React', :path => '../node_modules/react-native/'
   pod 'React-Core', :path => '../node_modules/react-native/'
   pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
   pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
@@ -78,6 +76,8 @@ target 'app' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
   target 'appTests' do
     inherit! :complete

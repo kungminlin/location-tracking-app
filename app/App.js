@@ -25,7 +25,12 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import DeviceInfo from 'react-native-device-info';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
+
+Geolocation.setRNConfiguration({
+  authorizationLEvel: 'always',
+  skipPermissionRequests: false
+})
 
 export default class App extends Component {
   constructor(props) {
