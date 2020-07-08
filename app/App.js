@@ -45,19 +45,19 @@ export default class App extends Component {
 
     var watchID = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords
+        const {latitude, longitude} = position.coords;
 
         this.setState({
           latitude: latitude,
           longitude: longitude,
           timestamp: position.timestamp
-        })
+        });
       },
       error => console.log(error),
       {
         enableHighAccuracy: true,
         timeout: 20000,
-        distanceFilter: 1
+        distanceFilter: 0
       }
     )
   }
