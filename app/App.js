@@ -27,7 +27,22 @@ import {
 import DeviceInfo from 'react-native-device-info';
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      macAddress: ""
+    }
+  }
+
+  componentDidMount() {
+    DeviceInfo.getMacAddress().then(mac => {
+      this.setState({macAddress: JSON.stringify(mac)})
+    })
+  }
+
   render() {
+    var macAddress = this.state.macAddress;
+
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -35,7 +50,6 @@ export default class App extends Component {
           <ScrollView
             contentInsetAdjustmentBehavior="automatic"
             style={styles.scrollView}>
-            <Header />
             {global.HermesInternal == null ? null : (
               <View style={styles.engine}>
                 <Text style={styles.footer}>Engine: Hermes</Text>
@@ -43,31 +57,11 @@ export default class App extends Component {
             )}
             <View style={styles.body}>
               <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Step One</Text>
+                <Text style={styles.sectionTitle}>Device Information</Text>
                 <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                  screen and then come back to see your edits.
+                  Mac Address: {macAddress}
                 </Text>
               </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>See Your Changes</Text>
-                <Text style={styles.sectionDescription}>
-                  <ReloadInstructions />
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Debug</Text>
-                <Text style={styles.sectionDescription}>
-                  <DebugInstructions />
-                </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Learn More</Text>
-                <Text style={styles.sectionDescription}>
-                  Read the docs to discover what to do next:
-                </Text>
-              </View>
-              <LearnMoreLinks />
             </View>
           </ScrollView>
         </SafeAreaView>
