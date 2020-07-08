@@ -25,11 +25,15 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import DeviceInfo from 'react-native-device-info';
+import Geolocation from 'react-native-geolocation-service';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      latitude: 0,
+      longitude: 0,
+      timestamp: 0,
       macAddress: ""
     }
   }
@@ -38,10 +42,30 @@ export default class App extends Component {
     DeviceInfo.getMacAddress().then(mac => {
       this.setState({macAddress: JSON.stringify(mac)})
     })
+
+    var watchID = Geolocation.watchPosition(
+      position => {
+        const {latitude, longitude} = position.coords
+
+        this.setState({
+          latitude: latitude,
+          longitude: longitude,
+          timestamp: position.timestamp
+        })
+      },
+      error => console.log(error),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        distanceFilter: 1
+      }
+    )
   }
 
   render() {
     var macAddress = this.state.macAddress;
+    var latitude = this.state.latitude;
+    var longitude = this.state.longitude;
 
     return (
       <>
@@ -60,6 +84,9 @@ export default class App extends Component {
                 <Text style={styles.sectionTitle}>Device Information</Text>
                 <Text style={styles.sectionDescription}>
                   Mac Address: {macAddress}
+                </Text>
+                <Text style={styles.sectionDescription}>
+                  Location: {latitude}, {longitude}
                 </Text>
               </View>
             </View>
